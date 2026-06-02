@@ -1,8 +1,6 @@
-#Project: HISTORICAL BIOGEOGRAPHY AND NICHE EVOLUTION IN EUGENIINAE (MYRTACEAE)
+#Project: EUGENIA HISTORICAL BIOGEOGRAPHY
 #Author: Paulo Henrique Gaem
 #University of Michigan, Ann Arbor
-
-# 7. PERFORMING NICHE EVOLUTION ANALYSES WITH OUWIE
 
 # Setting working directory
 setwd("~/Documents/Projetos/3_PhD/1_Project/Eugenia Biogeography")
@@ -376,7 +374,7 @@ for (env_var in eigenvct){
     
     #  n_regimes <- length(unique(pruned_tree2$node.label))
     
-    boot.reps <- OUwie.boot(phy = pruned_tree2,
+    boot.reps <- try(OUwie.boot(phy = pruned_tree2,
                             data = clade_data,
                             model= "BM1",
                             nboot = 100,
@@ -385,7 +383,11 @@ for (env_var in eigenvct){
                             theta = rep(fit_BM$theta[,1], 2),
                             theta0 = fit_BM$theta[1,1],
                             simmap.tree = FALSE, 
-                            algorithm = "three.point")
+                            algorithm = "three.point"),
+                     silent=T)
+    if (inherits(boot.reps, "try-error")) {
+      cat("  --> [ERROR] Bootstrapping failed for", env_var, "-", clade, ". Skipping.\n")
+      next}
     
     boot.res <- as.data.frame(apply(boot.reps, 2, quantile, probs=c(0.025, 0.975), na.rm=TRUE))
     
@@ -412,15 +414,33 @@ summ.ouwie2 <- data.frame( #creating an empty data.frame
 
 res.rows <- names(ouwie_list) # creating a vector of objects inside ouwie_list (equal to boot2_list)
 
-for (i in 1:length(ouwie_list)){ # iterating through objects within both lists
-  summ.ouwie2[i, "clade"] <- names(ouwie_list)[i]
-  summ.ouwie2[i, "sig.sq"] <- ouwie_list[[i]]$solution[2]
-  summ.ouwie2[i, "lnL"] <- ouwie_list[[i]]$loglik
-  summ.ouwie2[i, "AIC"] <- ouwie_list[[i]]$AIC
-  summ.ouwie2[i, "AICc"] <- ouwie_list[[i]]$AICc
+# iterating through objects within both lists
+model_names <- names(ouwie_list)
+
+for (i in 1:length(model_names)){
   
-  summ.ouwie2[i, "sig.sq.LB"] <- boot2_list[[i]]$sigma.sq_1[1]
-  summ.ouwie2[i, "sig.sq.UB"] <- boot2_list[[i]]$sigma.sq_1[2]
+  current_model <- model_names[i]
+  
+  # Extract the main model fit
+  fit <- ouwie_list[[current_model]]
+  
+  # Populate the standard model fit metrics
+  summ.ouwie2[i, "clade"]  <- current_model
+  summ.ouwie2[i, "sig.sq"] <- fit$solution[2]
+  summ.ouwie2[i, "lnL"]    <- fit$loglik
+  summ.ouwie2[i, "AIC"]    <- fit$AIC
+  summ.ouwie2[i, "AICc"]   <- fit$AICc
+  
+  # Check if this specific model successfully generated bootstrap data
+  if (current_model %in% names(boot2_list)) {
+    # If it exists, extract the Lower Bound (LB) and Upper Bound (UB)
+    summ.ouwie2[i, "sig.sq.LB"] <- boot2_list[[current_model]]$sigma.sq_1[1]
+    summ.ouwie2[i, "sig.sq.UB"] <- boot2_list[[current_model]]$sigma.sq_1[2]
+  } else {
+    # If bootstrap failed/skipped, explicitly leave the cells as NA
+    summ.ouwie2[i, "sig.sq.LB"] <- NA
+    summ.ouwie2[i, "sig.sq.UB"] <- NA
+  }
 }
 
 # sorting table by highest to lowers sig-sq value, within each eigenvector
