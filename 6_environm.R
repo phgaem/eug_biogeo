@@ -1,11 +1,10 @@
 #Project: HISTORICAL BIOGEOGRAPHY AND NICHE EVOLUTION IN EUGENIINAE (MYRTACEAE)
-#Author: Paulo Henrique Gaem
-#University of Michigan, Ann Arbor
+#Pipeline Author: Paulo Henrique Gaem, University of Michigan-Ann Arbor
 
 # 6. GETTING ENVIRONMENTAL DATA BASED ON OCCURRENCE POINTS
 
 # Setting working directory
-setwd("~/Documents/Projetos/3_PhD/1_Project/Eugenia Biogeography")
+setwd("path/to/repository")
 
 #loading packages
 library(ape)

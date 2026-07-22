@@ -1,11 +1,10 @@
 #Project: HISTORICAL BIOGEOGRAPHY AND NICHE EVOLUTION IN EUGENIINAE (MYRTACEAE)
-#Author: Paulo Henrique Gaem
-#University of Michigan, Ann Arbor
+#Pipeline Author: Paulo Henrique Gaem, University of Michigan-Ann Arbor
 
 # 1. MANIPULATING PHYLOGENY AND GETTING GBIF DATA
 
 # Setting working directory
-setwd("~/Documents/Projetos/3_PhD/1_Project/Eugenia Biogeography")
+setwd("path/to/repository")
 
 #loading packages
 library(ape)
@@ -70,5 +69,5 @@ occ_result <- rgbif::occ_download(rgbif::pred_in("scientificName", resolved_name
                                   format = "SIMPLE_CSV", 
                                   user=user,pwd=pwd,email=email) # Sending request to GBIF
 
-c <- occ_download_get('0005129-250415084134356') %>%
+c <- occ_download_get('') %>%
   occ_download_import()

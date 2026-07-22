@@ -1,6 +1,5 @@
 #Project: HISTORICAL BIOGEOGRAPHY AND NICHE EVOLUTION IN EUGENIINAE (MYRTACEAE)
-#Author: Paulo Henrique Gaem
-#University of Michigan, Ann Arbor
+#Pipeline Author: Paulo Henrique Gaem, University of Michigan-Ann Arbor
 
 # 0. FUNCTIONS AND VECTORS USED IN THE PIPELINE
 
